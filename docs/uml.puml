@@ -1,0 +1,57 @@
+@startuml
+package RadioactiveDecay #DDDDDD {
+  IAtom -- Atom
+  Sample o-- Atom
+  Sample --() List
+
+  Experiment o--Sample
+
+  interface IAtom{
+    + int AtomicNumber
+    + String DisplayedName
+  }
+
+class Atom{
+  - Map<String,float> parameter
+  - boolean undergone
+  --
+  ..Constructor..
+  + Atom(int,string,float,boolean=0)
+  + Atom(Atom)
+  /'..Getters..
+  + double GetHalflife()
+  + double GetDecayConstant()
+  + double IsUndergone()
+  ..Setters..
+  + double SetHalflife(double)
+  + double SetDecayConstant(duuble)
+  + double SetUndergone(boolean)
+  '/
+}
+
+
+
+class Sample{
+  - List<Atom> sample
+  - int size
+  +Sample()
+  +
+}
+class Experiment{
+  +long Duration
+  +void Run()
+  +long RemainingParticles()
+  +float SurviveProbability()
+  +float radiologicalActivity()
+  +void SetDuration(long)
+}
+}
+
+
+namespace Presentation{
+  class Simulate{
+
+  }
+}
+RadioactiveDecay -- Presentation
+@enduml
