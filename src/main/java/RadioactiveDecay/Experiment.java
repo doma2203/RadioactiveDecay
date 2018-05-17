@@ -62,10 +62,10 @@ public class Experiment extends Thread
             {
                 System.out.println(e.getMessage());
             }
-            System.out.println(t/1000);
-            System.out.println(remainingParticles());
-            System.out.println(surviveProbability());
-            System.out.println(radiologicalActivity());
+            System.out.println("time: " + t/1000);
+            System.out.println("remaining particles: " + remainingParticles());
+            System.out.println("survive probability: " + surviveProbability());
+            System.out.println("radiological activity: " + radiologicalActivity());
             System.out.println();
             t = (new Date()).getTime() - t0.getTime();
 
