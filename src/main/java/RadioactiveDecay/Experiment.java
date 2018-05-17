@@ -1,5 +1,6 @@
 package RadioactiveDecay;
-import java.util.*;
+
+import java.util.Date;
 
 public class Experiment extends Thread
 {
@@ -11,9 +12,9 @@ public class Experiment extends Thread
     private float P;
     private float A;
 
-    Experiment(long duration, int size, int no, String name, String parameter_name, Float parameter_value)
+    Experiment(long duration, int size, ChemicalElement no, String parameter_name, Float parameter_value)
     {
-        this.sample = new Sample(size, no, name, parameter_name, parameter_value);
+        this.sample = new Sample(size, no, parameter_name, parameter_value);
         this.t0= new Date();
         this.duration = duration*1000; //bylo w sekundach, zmieniam na milisekundy
         this.N0 = size;

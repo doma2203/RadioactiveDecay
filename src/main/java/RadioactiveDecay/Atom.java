@@ -1,8 +1,6 @@
 package RadioactiveDecay;
 
-import java.util.*;
-
- enum ChemicalElement {
+enum ChemicalElement {
     Uran(235),
     Rad(222),
     Polon(111); //TODO: Dodac pierwiastki!
@@ -14,20 +12,6 @@ import java.util.*;
     }
 }
 
-
-class Parameter extends HashMap<String, Float> {
-    private Boolean isCorrectKey(String key, String pattern) {
-        return (key.compareToIgnoreCase(pattern) == 0);
-    }
-
-    @Override
-    public Float put(String key, Float value) {
-        if (this.size() < 1 || isCorrectKey(key, "halflife") || isCorrectKey(key, "meanlifetime") || isCorrectKey(key, "decayconstant")) {
-            return super.put(key, value);
-        } else
-            throw new IllegalArgumentException("Niepoprawny argument!");
-    }
-}
 
 public class Atom implements IAtom {
 
