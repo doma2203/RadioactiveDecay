@@ -54,13 +54,16 @@ public class Atom implements IAtom {
 
     public Float getParameterValue() {
         return Parameter.get(getParameterName());
+
     }
 
-    public void Undergone() {
+    public void Undergone()
+    {
         Undergone = true;
     }
 
-    public Boolean getState() {
+    public Boolean getState()
+    {
         return Undergone;
     }
 }
