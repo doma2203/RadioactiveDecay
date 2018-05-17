@@ -2,6 +2,18 @@ package RadioactiveDecay;
 
 import java.util.*;
 
+ enum ChemicalElement {
+    Uran(235),
+    Rad(222),
+    Polon(111); //TODO: Dodac pierwiastki!
+
+    final int code;
+
+    ChemicalElement(int code) {
+        this.code = code;
+    }
+}
+
 
 class Parameter extends HashMap<String, Float> {
     private Boolean isCorrectKey(String key, String pattern) {
@@ -19,28 +31,29 @@ class Parameter extends HashMap<String, Float> {
 
 public class Atom implements IAtom {
 
-    int AtomicNumber;
-    String DisplayedName;
+    ChemicalElement Info;
     Parameter Parameter = new Parameter();
     Boolean Undergone = false;
 
-    public Atom(int no, String name, String parameter_name, Float parameter_value) {
-        this.AtomicNumber = no;
-        this.DisplayedName = name;
+    public Atom(ChemicalElement no, String parameter_name, Float parameter_value) {
+        Info = no;
         this.Parameter.put(parameter_name, parameter_value);
     }
 
     public int getAtomicNumber() {
-
-        return this.AtomicNumber;
+        return Info.code;
     }
 
-    public String getDisplayedName() {
-        return DisplayedName;
+    public String getName() {
+        return Info.name();
     }
 
-    public String getParameter() {
-        return Parameter.keySet().toString(); //TODO: Delete brackets in string!
+    public String getParameterName() {
+        return Parameter.keySet().toArray()[0].toString();
+    }
+
+    public Float getParameterValue() {
+        return Parameter.get(getParameterName());
     }
 
     public void Undergone() {
