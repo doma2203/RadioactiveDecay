@@ -8,5 +8,5 @@ public interface IAtom {
 
     int getAtomicNumber();
 
-    String getDisplayedName();
+    String getName();
 }

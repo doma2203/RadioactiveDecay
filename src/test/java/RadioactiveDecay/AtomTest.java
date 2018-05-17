@@ -1,30 +1,26 @@
 package RadioactiveDecay;
 
 import org.junit.Test;
-
 import static org.junit.Assert.*;
-
 public class AtomTest {
 
-    Atom atom = new Atom(1, "Wodór", "HalfLife", 2.23f);
+Atom atom = new Atom(ChemicalElement.Uran, "HalfLife",  2.23f);
 
     @Test
-    public void getAtomicNumber() {
-        assertEquals(1, atom.getAtomicNumber());
-    }
+    public void getAtomicNumber() { assertEquals(235, atom.getAtomicNumber()); }
 
     @Test
-    public void getDisplayedName() {
-        assertEquals("Wodór", atom.getDisplayedName());
-    }
+    public void getName() { assertEquals("Uran", atom.getName()); }
 
     @Test
-    public void getParameter() {
-        assertEquals("HalfLife", atom.getParameter());
-    }
+    public void getParameterName() { assertEquals("HalfLife", atom.getParameterName()); }
+
+    @Test
+    public void getParameterValue() { assertEquals(Float.valueOf(2.23f),atom.getParameterValue());}
 
     @Test
     public void Undergone() {
+        assertEquals(false,atom.getState());
         atom.Undergone();
         assertEquals(true, atom.getState());
     }
