@@ -2,8 +2,7 @@ package RadioactiveDecay;
 
 public class Sample
 {
-    Atom[] sample;
-
+    private Atom[] sample;
 
     Sample(int size, ChemicalElement no, String parameter_name, Float parameter_value)
     {
@@ -27,7 +26,7 @@ public class Sample
 //        }
 //    }
 
-    int size()
+    public int size()
     {
         return sample.length;
     }
@@ -37,5 +36,13 @@ public class Sample
         return sample[0].Parameter.get(parameterName);
     }
 
+    public boolean getState(int index)
+    {
+        return sample[index].getState();
+    }
 
+    void Undergo(int index)
+    {
+        sample[index].Undergone();
+    }
 }
