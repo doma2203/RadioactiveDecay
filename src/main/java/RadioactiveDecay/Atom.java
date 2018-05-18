@@ -1,42 +1,68 @@
 package RadioactiveDecay;
 
+/**
+ * Klasa to tworzenia atomow i roznych parametrach
+ */
 public class Atom implements IAtom
 {
-    ChemicalElement info;                   //nazwa pierwiastka i liczba atomowa
-    Parameter parameter = new Parameter();  //mapa na parametry: czas połowicznego rozpadu, stała rozpadu i średni czas życia cząstki
-    Boolean undergone = false;              //stan atomu (czy już się rozpadł)
+    ChemicalElement info;
+    Parameter parameter = new Parameter();
+    Boolean undergone = false;
 
-    public Atom(ChemicalElement no, String parameter_name, Float parameter_value)
+    /**
+     * Tworzy atom pierwiastka okreslonego parametrem element
+     * @param element rodzaj pierwiastka - typ wyliczeniowy ChemicalElement
+     * @param parameterName nazwa parametru ktory podajemy (halfLife, meanLifeTime lub decayConstant)
+     * @param parameterValue wartosc powyzszego parametru (halfLife podajemy w sekundach)
+     * @see Parameter
+     */
+    public Atom(ChemicalElement element, String parameterName, Float parameterValue)
     {
-        info = no;
-        this.parameter.put(parameter_name, parameter_value);
+        info = element;
+        this.parameter.put(parameterName, parameterValue);
     }
 
-    //liczba atomowa
+    /**
+     * zwraca liczba atomowa pierwiastka
+     * @return liczba atomowa
+     */
     public int getAtomicNumber()
     {
         return info.code;
     }
 
-    //nazwa pierwiastka
+    /**
+     * zwraca nazwe pierwiastka
+     * @return nazwa pierwistka
+     */
     public String getName()
     {
         return info.name();
     }
 
-    //pobiera wartość: czas połowicznego rozpadu, stała rozpadu lub średni czas życia cząstki
+    /**
+     * zwraca wartosc parametru (halfLife, meanLifeTime lub decayConstant)
+     * @param parameterName nazwa parametru ktorego wartosc chcemy otrzymac (halfLife, meanLifeTime lub decayConstant)
+     * @return wartosc parametru określonego argumentem parameterName
+     * @see Parameter
+     */
     public Float getParameterValue(String parameterName)
     {
         return parameter.get(parameterName);
     }
 
-    //rozpad - zmiana stanu atomu
+    /**
+     * rozpad atomu - zmienia stanu atomu, nadaje polu undergone wartosc true
+     */
     public void undergo()
     {
         undergone = true;
     }
 
-    //stan atomu - czy już się rozpadł
+    /**
+     * zwraca informacje o stanie atomu (czy juz sie rozpadl)
+     * @return wartosc pola undergone
+     */
     public Boolean isUndergone()
     {
         return undergone;

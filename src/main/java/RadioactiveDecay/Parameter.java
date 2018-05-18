@@ -2,14 +2,39 @@ package RadioactiveDecay;
 
 import java.util.HashMap;
 
+/**
+ * HaszMapa przechowujaca wartosci trzech parametrow:
+ * czasu polowicznego rozpadu,
+ * sredniego czasu zycia czastki
+ * i stalej rozpadu.
+ * Do obiektu mozna wlozyc tylko jeden parametr,
+ * pozostale obliczane sa na podstawie jego wartosci,
+ * poniewaz sa ze soba zwiazane wzorami matematycznymi.
+ */
 class Parameter extends HashMap<String, Float>
 {
-    //sprawdza poprawność nazwy klucza
+    /**
+     * Sprawdza poprawność klucza. Klucz musi byc jedna z trzech nazw:
+     * halfLife, decayConstant lub meanLifeTime.
+     * @param key klucz podany przez uzytkownika
+     * @param pattern wzor klucza - jeden z trzech halfLife, decayConstant lub meanLifeTime
+     * @return zwraca info o poprawnosci klucza
+     */
     private Boolean isCorrectKey(String key, String pattern)
     {
         return (key.compareToIgnoreCase(pattern) == 0);
     }
 
+    /**
+     * Do obiektu mozna wlozyc tylko jeden parametr,
+     * pozostale obliczane sa na podstawie jego wartosci,
+     * poniewaz sa ze soba zwiazane wzorami matematycznymi.
+     * Klucz musi być jedna z trzech nazw:
+     * halfLife, decayConstant lub meanLifeTime.
+     * @param key nazwa parametru - halfLife, decayConstant lub meanLifeTime
+     * @param value partosc parametru (halfLife podajemy w sekundach)
+     * @return zwraca wartosc klucza
+     */
     @Override
     public Float put(String key, Float value)
     {
