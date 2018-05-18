@@ -1,53 +1,44 @@
 package RadioactiveDecay;
 
-enum ChemicalElement {
-    Uran(235),
-    Rad(222),
-    Polon(111); //TODO: Dodac pierwiastki!
+public class Atom implements IAtom
+{
+    ChemicalElement info;                   //nazwa pierwiastka i liczba atomowa
+    Parameter parameter = new Parameter();  //mapa na parametry: czas połowicznego rozpadu, stała rozpadu i średni czas życia cząstki
+    Boolean undergone = false;              //stan atomu (czy już się rozpadł)
 
-    final int code;
-
-    ChemicalElement(int code) {
-        this.code = code;
-    }
-}
-
-
-public class Atom implements IAtom {
-
-    ChemicalElement Info;
-    Parameter Parameter = new Parameter();
-    Boolean Undergone = false;
-
-    public Atom(ChemicalElement no, String parameter_name, Float parameter_value) {
-        Info = no;
-        this.Parameter.put(parameter_name, parameter_value);
-    }
-
-    public int getAtomicNumber() {
-        return Info.code;
-    }
-
-    public String getName() {
-        return Info.name();
-    }
-
-    public String getParameterName() {
-        return Parameter.keySet().toArray()[0].toString();
-    }
-
-    public Float getParameterValue() {
-        return Parameter.get(getParameterName());
-
-    }
-
-    public void Undergone()
+    public Atom(ChemicalElement no, String parameter_name, Float parameter_value)
     {
-        Undergone = true;
+        info = no;
+        this.parameter.put(parameter_name, parameter_value);
     }
 
-    public Boolean getState()
+    //liczba atomowa
+    public int getAtomicNumber()
     {
-        return Undergone;
+        return info.code;
+    }
+
+    //nazwa pierwiastka
+    public String getName()
+    {
+        return info.name();
+    }
+
+    //pobiera wartość: czas połowicznego rozpadu, stała rozpadu lub średni czas życia cząstki
+    public Float getParameterValue(String parameterName)
+    {
+        return parameter.get(parameterName);
+    }
+
+    //rozpad - zmiana stanu atomu
+    public void undergo()
+    {
+        undergone = true;
+    }
+
+    //stan atomu - czy już się rozpadł
+    public Boolean isUndergone()
+    {
+        return undergone;
     }
 }

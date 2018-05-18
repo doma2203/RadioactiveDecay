@@ -2,47 +2,50 @@ package RadioactiveDecay;
 
 public class Sample
 {
-    private Atom[] sample;
+    private Atom[] atoms;       //tablica atomów
 
-    Sample(int size, ChemicalElement no, String parameter_name, Float parameter_value)
+    public Sample(int size, ChemicalElement no, String parameter_name, Float parameter_value)
     {
-        sample = new Atom[size];
+        atoms = new Atom[size];
 
         //create atoms
         for (int i =0; i< size; i++)
         {
-            sample[i] = new Atom(no, parameter_name, parameter_value);
+            atoms[i] = new Atom(no, parameter_name, parameter_value);
         }
     }
 
 //    Sample(int size, Atom atom)
 //    {
-//        sample = new Atom[size];
+//        atoms = new Atom[size];
 //
 //        //create atoms
 //        for (int i =0; i< size; i++)
 //        {
-//            sample[i] = new Atom(atom);
+//            atoms[i] = new Atom(atom);
 //        }
 //    }
 
     public int size()
     {
-        return sample.length;
+        return atoms.length;
     }
 
+    //zwraca wartości parametrów (czas połowicznego rozpadu, stała rozpadu lub średni czas życia cząstki)
     public float get(String parameterName)
     {
-        return sample[0].Parameter.get(parameterName);
+        return atoms[0].parameter.get(parameterName);
     }
 
-    public boolean getState(int index)
+    //stan atomu o danym indeksie w tablicy - czy już się rozpadł
+    public boolean isUndergone(int index)
     {
-        return sample[index].getState();
+        return atoms[index].isUndergone();
     }
 
-    void Undergo(int index)
+    //rozpad atomu o danym indeksie w tablicy - zmiana jego stanu na undergone
+    void undergo(int index)
     {
-        sample[index].Undergone();
+        atoms[index].undergo();
     }
 }

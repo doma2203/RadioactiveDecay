@@ -4,16 +4,20 @@ import java.util.HashMap;
 
 class Parameter extends HashMap<String, Float>
 {
-    private Boolean isCorrectKey(String key, String pattern) {
+    //sprawdza poprawność nazwy klucza
+    private Boolean isCorrectKey(String key, String pattern)
+    {
         return (key.compareToIgnoreCase(pattern) == 0);
     }
 
     @Override
     public Float put(String key, Float value)
     {
+        //do mapy można dołożyć tylko jeden klucz z wartością, gdyż pozostałe są ze sobą związane i można je wyliczyć z tego jednego
         if (this.size() < 1)
         {
             //sprawdza poprawnosc klucza i wylicza automatycznie pozostale wartosci
+            //są tylko trzy poprawne klucze: czas połowicznego rozpadu, stała rozpadu i średni czas życia cząstki
             if (isCorrectKey(key, "halfLife"))
             {
                 super.put("decayConstant", (float)Math.log(2)/value );
