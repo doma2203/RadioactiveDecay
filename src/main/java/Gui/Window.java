@@ -9,7 +9,6 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Window extends JFrame
 {
     private JPanel panelMain;
@@ -144,6 +143,8 @@ public class Window extends JFrame
             public void menuSelected(MenuEvent e)
             {
                 size = control.getInputSize();
+                chart.clear();
+
                 ex = new Experiment(
                         control.getInputTime(),  size, control.getInputElement(), "halfLife", (float) 2);
 
@@ -152,7 +153,7 @@ public class Window extends JFrame
                     public void actionPerformed(ActionEvent evt)
                     {
                         canvas.repaintExperiment(size, ex);
-                        chart.repaintExperiment(ex.getRadiologicalActivity(),ex.getSurviveProbability(), ex.getTime());
+                        chart.repaintExperiment(ex.getRadiologicalActivity(), ex.getTime(),control.getInputTime(),size);
                         navigation.setExperimentValues(size,ex.getRemainingParticles(),ex.getSurviveProbability());
                     }
                 };
@@ -210,6 +211,8 @@ public class Window extends JFrame
         private int size;
         private Experiment ex;
 
+        private int padding = 25;
+
         public Canvas()
         {
             setBackground(Color.lightGray);
@@ -225,14 +228,21 @@ public class Window extends JFrame
             repaint();
         }
 
+        public void clear()
+        {
+            size = 0;
+            ex = null;
+            repaint();
+        }
+
         @Override
         protected void paintComponent(Graphics g)
         {
             super.paintComponent(g);
 
+            double xScale = ((double) getWidth() - (2 * padding)) / 10;
+            double yScale = ((double) getHeight() - 2 * padding) / 10;
 
-            int x = 0;
-            int y = 0;
             for(int i = 0; i < size; i++)
             {
                 if(ex.isUndergone(i))
@@ -240,18 +250,34 @@ public class Window extends JFrame
                 else
                     g.setColor(Color.green);
 
-                g.fillOval(x,y, 10, 10);
-                x+=10;
-                y+=10;
+                int x = (int)((i % 10) * xScale) + padding;
+                int y = (int)((i % 100)/10 * yScale) + padding;
+                g.fillOval(x,y, (int)xScale, (int)yScale);
             }
         }
     }
 
     public class Chart extends JPanel
     {
+        /**
+         * Listy przechowujace parametry do wystwietlania wartosci na wykresie
+         */
         List<Double> radiologicalActivity  = new ArrayList();
-        List<Double> surviveProbability  = new ArrayList();
         List<Long> time  = new ArrayList();
+
+        /**
+         * Zmienne potrzebne do utrzymania estetycznego wygladu wykresu
+         */
+        private int padding = 25;
+        private int labelPadding = 25;
+        private int maxTime = 1;
+        private int minTime = 0;
+        private int maxRadAct = 22;
+        private int minRadAct = 0;
+        private int numberYDivisions = 10;
+        private int pointWidth = 4;
+        private Color gridColor = new Color(200, 200, 200, 200);
+        private Color lineColor = new Color(44, 102, 230, 180);
 
         public Chart()
         {
@@ -261,28 +287,95 @@ public class Window extends JFrame
             repaint();
         }
 
-        public void repaintExperiment(double _radiologicalActivity, double _surviveProbability, long _time) 
+        public void repaintExperiment(double _radiologicalActivity, long _time, int _timeSize, int _elementsSize)
         {
             radiologicalActivity.add(_radiologicalActivity);
-            surviveProbability.add(_surviveProbability);
             time.add(_time);
+            maxRadAct = _elementsSize/3;
+            maxTime = _timeSize;
             repaint();
         }
 
         public void clear() 
         {
             radiologicalActivity.clear();
-            surviveProbability.clear();
             time.clear();
             repaint();
         }
 
+        /**
+         * Malowanie wykresu na podstawie repozytorium:
+         * https://gist.github.com/roooodcastro/6325153
+         */
         @Override
         protected void paintComponent(Graphics g)
         {
             super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+            // wyliczania skali dla os
+            double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (maxTime - minTime);
+            double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (maxRadAct - minRadAct);
 
+            // rysowanie białego tła
+            g2.setColor(Color.WHITE);
+            g2.fillRect(padding + labelPadding, padding, getWidth() - (2 * padding) - labelPadding, getHeight() - 2 * padding - labelPadding);
+            g2.setColor(Color.BLACK);
+
+            // tworzenie poziomych linii i opisanie osi Y
+            for (int i = 0; i < numberYDivisions + 1; i++) {
+                int x0 = padding + labelPadding;
+                int x1 = pointWidth + padding + labelPadding;
+                int y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
+                int y1 = y0;
+                if (maxRadAct > 0) {
+                    g2.setColor(gridColor);
+                    g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
+                    g2.setColor(Color.BLACK);
+                    String yLabel = ((int) ((minRadAct + (maxRadAct - minRadAct) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
+                    FontMetrics metrics = g2.getFontMetrics();
+                    int labelWidth = metrics.stringWidth(yLabel);
+                    g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
+                }
+                g2.drawLine(x0, y0, x1, y1);
+            }
+
+            // tworzenie pionowych linii i opisanie osi X
+            for (int i = 0; i <= maxTime; i++) {
+                if (maxTime > 0) {
+                    int x0 = i * (getWidth() - padding * 2 - labelPadding) / maxTime + padding + labelPadding;
+                    int x1 = x0;
+                    int y0 = getHeight() - padding - labelPadding;
+                    int y1 = y0 - pointWidth;
+                    if ((i % ((int) ((maxTime / 20.0)) + 1)) == 0) {
+                        g2.setColor(gridColor);
+                        g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
+                        g2.setColor(Color.BLACK);
+                        String xLabel = i + "";
+                        FontMetrics metrics = g2.getFontMetrics();
+                        int labelWidth = metrics.stringWidth(xLabel);
+                        g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
+                    }
+                    g2.drawLine(x0, y0, x1, y1);
+                }
+            }
+
+            // tworzenie czarnych linii os
+            g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, padding + labelPadding, padding);
+            g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, getWidth() - padding, getHeight() - padding - labelPadding);
+
+            // rysowanie punktow na wykresie
+            g2.setStroke( new BasicStroke(2f));
+            for (int i = 1; i < time.size(); i++) {
+                g2.setColor(lineColor);
+                int x1 = (int)((time.get(i-1).intValue()* xScale)/1000  + padding + labelPadding);
+                int y1 = (int)((maxRadAct - radiologicalActivity.get(i-1)) * yScale + padding);
+                int x2 = (int)((time.get(i).intValue()* xScale)/1000  + padding + labelPadding);
+                int y2 = (int)((maxRadAct - radiologicalActivity.get(i)) * yScale + padding);
+                g2.fillOval(x2 , y2, pointWidth, pointWidth);
+                g2.drawLine(x1, y1, x2, y2);
+            }
         }
     }
 
@@ -337,7 +430,6 @@ public class Window extends JFrame
         private JLabel inputSize;
         private JLabel inputElement;
         private JComboBox<ChemicalElement> elementsList;
-//        private JComboBox<String> parametersList;
 
         public Control()
         {
@@ -345,11 +437,8 @@ public class Window extends JFrame
 
             elementsList = new JComboBox<ChemicalElement>();
             elementsList.setModel(new DefaultComboBoxModel<>(ChemicalElement.values()));
-//            parametersList = new JComboBox<String>();
-//            List<String> parametersNames = Arrays.asList("halfLife", "meanLifeTime","decayConstant");
-//            parametersList.setModel(new DefaultComboBoxModel(parametersNames.toArray()));
-            scrollTime = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, 100);
-            scrollSize = new JScrollBar(JScrollBar.HORIZONTAL, 22, 1, 1, 100);
+            scrollTime = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, 1001);
+            scrollSize = new JScrollBar(JScrollBar.HORIZONTAL, 22, 1, 1, 1001);
             inputTime = new JLabel("Czas: " + "1");
             inputSize = new JLabel("Ilość atomów: " +"22");
             inputElement = new JLabel("Pierwiastek: " + elementsList.getItemAt(0));
@@ -367,7 +456,17 @@ public class Window extends JFrame
                 @Override
                 public void adjustmentValueChanged(AdjustmentEvent e)
                 {
-                    inputTime.setText("Time: " + String.valueOf(scrollTime.getValue()));
+                    chart.clear();
+                    canvas.clear();
+                    try
+                    {
+                        timer.stop();
+                    }
+                    catch(Exception exc)
+                    {
+
+                    }
+                    inputTime.setText("Czas: " + String.valueOf(scrollTime.getValue()));
                 }
             });
             scrollSize.addAdjustmentListener(new AdjustmentListener()
@@ -375,6 +474,16 @@ public class Window extends JFrame
                 @Override
                 public void adjustmentValueChanged(AdjustmentEvent e)
                 {
+                    chart.clear();
+                    canvas.clear();
+                    try
+                    {
+                        timer.stop();
+                    }
+                    catch(Exception exc)
+                    {
+
+                    }
                     inputSize.setText("Ilość atomów: " + String.valueOf(scrollSize.getValue()));
                 }
             });
