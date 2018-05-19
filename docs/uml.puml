@@ -1,57 +1,94 @@
 @startuml
-package RadioactiveDecay #DDDDDD {
-  IAtom -- Atom
-  Sample o-- Atom
-  Sample --() List
-
-  Experiment o--Sample
-
+package RadioactiveDecay  {
+  ChemicalElement --* IAtom
+  IAtom <|-- Atom
+  Atom *-- Parameter
+  Sample *-- Atom
+  Experiment --|> Thread
+  Experiment *-- Sample
+  Parameter --|> HashMap
   interface IAtom{
-    + int AtomicNumber
-    + String DisplayedName
+    - ChemicalElement Info
+    + int GetAtomicNumber()
+    + String GetName()
+
+  }
+
+  enum ChemicalElement{
+    {field} Uran (235)
+    {field} Wegiel(14)
+    {field} Fosfor(32)
+    {field} Pluton(239)
+    {field} Kobalt(60)
+    {field} Wodor(3)
+    {field} Potas(40)
+    {field} Rad(226)
+    {field} Miedz(64)
+    {field} Wapn(45)
+    {field} Jod(131)
+    {field} Polon(210)
+    - final int code
+    - ChemicalElement(int)
+
   }
 
 class Atom{
-  - Map<String,float> parameter
-  - boolean undergone
+  - Parameter parameter
+  - Boolean undergone
   --
-  ..Constructor..
-  + Atom(int,string,float,boolean=0)
+  ..Konstruktor..
+  + Atom(ChemicalElement,String,Float)
   + Atom(Atom)
-  /'..Getters..
-  + double GetHalflife()
-  + double GetDecayConstant()
-  + double IsUndergone()
-  ..Setters..
-  + double SetHalflife(double)
-  + double SetDecayConstant(duuble)
-  + double SetUndergone(boolean)
-  '/
+
+  ..Getter..
+  + String GetName()
+  + int GetAtomicNumber()
+  + double getParameterName()
+  + double getParameterValue(String)
+  + Bollean isUndergone()
+
+  ..Setter..
+  +void undergo()
 }
 
+class Parameter{
++Float put(String,Float)
++Float put(Parameter)
+-Boolean isCorrectKey(String,String)
 
+}
 
 class Sample{
-  - List<Atom> sample
-  - int size
-  +Sample()
-  +
+  - Atom[] sample
+  --Konstruktor--
+  +Sample(int,ChemicalElement,String,Float)
+  +Sample(int,Atom)
+  +Sample(Sample)
+  ..Getter..
+  +get()
+  +isUndergone(int)
+  +size()
 }
+
 class Experiment{
-  +long Duration
-  +void Run()
-  +long RemainingParticles()
-  +float SurviveProbability()
+  ..Konstruktor..
+  +Experiment(long,int,Atom)
+  +Experiment(long,int,ChemicalElement,String,Float)
+  +Experiment(long,Sample)
+  ..Getter..
+  +void getDuration(long)
+  +getRadiologicalActivity()
+  +getRemainingParticles()
+  +getSurviveProbability()
+  +isUndergone(int)
+  +getTime()
+
+ ..Obliczenia..
+  +long remainingParticles()
+  +float surviveProbability()
   +float radiologicalActivity()
-  +void SetDuration(long)
+  ..Watek..
+  +void run()
 }
 }
-
-
-namespace Presentation{
-  class Simulate{
-
-  }
-}
-RadioactiveDecay -- Presentation
 @enduml

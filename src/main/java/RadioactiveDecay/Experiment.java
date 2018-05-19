@@ -39,14 +39,39 @@ public class Experiment extends Thread
         this.decayConstant = sample.get("decayConstant");
     }
 
-//    Experiment(long duration, Sample sample)
-//    {
-//
-//    }
-//    Experiment(long duration, int size, Atom atom)
-//    {
-//
-//    }
+    /**
+     * Tworzy eksperyment na podstawie probki
+     *
+     * @param duration czas trwania eksperymentu
+     * @param sample   probka na podstawie ktorej zostanie stworzony eksperyment
+     */
+
+    public Experiment(long duration, Sample sample) {
+        this.sample = sample;
+        this.t0 = new Date();
+        this.duration = duration * 1000;
+        this.N0 = sample.size();
+        this.N = sample.size();
+        this.halfLife = sample.get("halfLife");
+        this.decayConstant = sample.get("decayConstant");
+    }
+
+    /**
+     * Tworzy eksperyment na podstawie atomu pierwiastka
+     *
+     * @param duration czas trwania eksperymentu
+     * @param size     rozmiar probki
+     * @param atom     atom pierwiastka
+     */
+    public Experiment(long duration, int size, Atom atom) {
+        sample = new Sample(size, atom);
+        this.t0 = new Date();
+        this.duration = duration * 1000;
+        this.N0 = sample.size();
+        this.N = sample.size();
+        this.halfLife = sample.get("halfLife");
+        this.decayConstant = sample.get("decayConstant");
+    }
 
     /**
      * Wylicza ile czastek nie uległo rozkladowi.

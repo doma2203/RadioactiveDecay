@@ -4,16 +4,23 @@ package RadioactiveDecay;
  * Typ wyliczeniowy okreslajacy rodzaj pierwiastka- jego nazwe i liczbe atomowa
  */
 public enum ChemicalElement {
+    Wegiel(14),
     Uran(235),
-    Rad(222),
-    Polon(111); //TODO: Dodac pierwiastki!
-
-    //liczba atomowa
+    Fosfor(32),
+    Pluton(239),
+    Kobalt(60),
+    Wodor(3),
+    Potas(40),
+    Rad(226),
+    Miedz(64),
+    Wapn(45),
+    Jod(131),
+    Polon(210);
     final int code;
 
     /**
-     *
-     * @param code liczba atomowa
+     * Konstruktor pozwalajacy na skojarzenie nazwy pierwiastka z jego liczba atomowa
+     * @param code wybrana liczba atomowa
      */
     ChemicalElement(int code)
     {

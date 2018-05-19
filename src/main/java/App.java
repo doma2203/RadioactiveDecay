@@ -5,33 +5,28 @@ import RadioactiveDecay.Sample;
 
 import static java.lang.Thread.sleep;
 
-public class App 
-{
-    public static void main( String[] args )
-    {
-        Atom atom = new Atom(ChemicalElement.Uran, "halflife", (float) 32);
-        Sample sample = new Sample(22, ChemicalElement.Uran, "halfLife", (float) 32);
+/***
+ *Przykladowe uzycie klasy.
+ */
+
+public class App {
+    public static void main(String[] args) {
+        Atom atom = new Atom(ChemicalElement.Uran, "halflife", 32.0f);
+        Sample sample = new Sample(22, new Atom(ChemicalElement.Uran, "halflife", 32.0f));
         Experiment ex = new Experiment(
-                4, 22, ChemicalElement.Uran, "halfLife", (float) 2);
+                10, sample);
         ex.start();
 
-        while (ex.getTime() < ex.getDuration())
-        {
-            try
-            {
-                sleep((long) (300));
-            } catch (Exception e)
-            {
+        while (ex.getTime() < ex.getDuration()) {
+            try {
+                sleep(300L);
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-            System.out.println("time: " + ex.getTime() / 1000);
-            System.out.println("remaining particles: " + ex.getRemainingParticles());
-            System.out.println("survive probability: " + ex.getSurviveProbability());
-            System.out.println("radiological activity: " + ex.getRadiologicalActivity());
+            System.out.printf("time:\t%d\nremaining particles:\t%d\nsurvive probability:\t%f\nradiological activity:\t%f\n", ex.getTime() / 1000, ex.getRemainingParticles(), ex.getSurviveProbability(), ex.getRadiologicalActivity());
+
             for (int i = 0; i < sample.size(); i++)
-            {
                 System.out.print(ex.isUndergone(i) + " ");
-            }
             System.out.println("\n");
         }
     }

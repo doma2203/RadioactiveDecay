@@ -68,4 +68,18 @@ class Parameter extends HashMap<String, Float>
         else
             throw new IllegalArgumentException("parametry są już ustawione!");
     }
+
+    /**
+     * Pozwala na wrzucenie do parametru innego parametru (kopiuje zawartosc parametru  do drugiego)
+     *
+     * @param p parametr do skopiowania
+     * @return wartosc klucza
+     */
+
+    public Float put(Parameter p) {
+        String key = p.keySet().toArray()[0].toString();
+        Float value = (Float) p.values().toArray()[0];
+        return put(key, value);
+
+    }
 }

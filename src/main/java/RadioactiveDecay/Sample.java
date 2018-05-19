@@ -27,16 +27,31 @@ public class Sample
         }
     }
 
-//    Sample(int size, Atom atom)
-//    {
-//        atoms = new Atom[size];
-//
-//        //create atoms
-//        for (int i =0; i< size; i++)
-//        {
-//            atoms[i] = new Atom(atom);
-//        }
-//    }
+    /**
+     * Tworzy probke (zbiór atomów) na podstawie istniejacego atomu pierwiastka
+     *
+     * @param size rozmiar probki
+     * @param atom atom pierwiastka
+     * @see Parameter
+     * @see ChemicalElement
+     */
+
+    public Sample(int size, Atom atom) {
+        atoms = new Atom[size];
+        for (int i = 0; i < size; i++) {
+            atoms[i] = new Atom(atom);
+        }
+    }
+
+    /**
+     * Tworzy probke na podstawie innej probki (konstruktor kopiujacy)
+     *
+     * @param s probka do skopiowania
+     */
+    public Sample(Sample s) {
+        atoms = s.atoms;
+    }
+
 
     /**
      *

@@ -1,7 +1,11 @@
 package RadioactiveDecay;
+/**
+ * Testy jednostkowe klasy Atom, w czasie oddania klasa przeszla wszystkie :)
+ */
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 public class AtomTest {
 
 Atom atom = new Atom(ChemicalElement.Uran, "halfLife",  2.23f);

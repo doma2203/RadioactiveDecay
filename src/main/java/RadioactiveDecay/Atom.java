@@ -1,7 +1,7 @@
 package RadioactiveDecay;
 
 /**
- * Klasa to tworzenia atomow i roznych parametrach
+ * Klasa do tworzenia atomow o roznych parametrach
  */
 public class Atom implements IAtom
 {
@@ -11,7 +11,7 @@ public class Atom implements IAtom
 
     /**
      * Tworzy atom pierwiastka okreslonego parametrem element
-     * @param element rodzaj pierwiastka - typ wyliczeniowy ChemicalElement
+     * @param element rodzaj pierwiastka
      * @param parameterName nazwa parametru ktory podajemy (halfLife, meanLifeTime lub decayConstant)
      * @param parameterValue wartosc powyzszego parametru (halfLife podajemy w sekundach)
      * @see Parameter
@@ -20,6 +20,16 @@ public class Atom implements IAtom
     {
         info = element;
         this.parameter.put(parameterName, parameterValue);
+    }
+
+    /**
+     * Tworzy atom pierwiatka na podstawie innego atomu (konstruktor kopiujący)
+     *
+     * @param a atom pierwiastka
+     */
+    public Atom(Atom a) {
+        info = a.info;
+        this.parameter.put(a.parameter);
     }
 
     /**
