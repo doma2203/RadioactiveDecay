@@ -1,12 +1,7 @@
 package RadioactiveDecay;
 
-import java.util.*;
-
-public interface IAtom {
-    int AtomicNumber = 0;
-    String DisplayedName = null;
-
+public interface IAtom
+{
     int getAtomicNumber();
-
     String getName();
 }

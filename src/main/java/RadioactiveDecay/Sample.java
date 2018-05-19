@@ -1,48 +1,79 @@
 package RadioactiveDecay;
 
+/**
+ * Klasa do tworzenia probek (zbioru atomow) do eksperymentu.
+ */
 public class Sample
 {
-    private Atom[] sample;
+    private Atom[] atoms;       //tablica atomów
 
-    Sample(int size, ChemicalElement no, String parameter_name, Float parameter_value)
+    /**
+     * Tworzy probke (zbior atomow) do eksperymentu.
+     * @param size ile atomow w probce
+     * @param element rodzaj pierwiastka
+     * @param parameterName nazwa parametru ktory podajemy (halfLife, meanLifeTime lub decayConstant)
+     * @param parameterValue wartosc powyzszego parametru (halfLife podajemy w sekundach)
+     * @see Parameter
+     * @see ChemicalElement
+     */
+    public Sample(int size, ChemicalElement element, String parameterName, Float parameterValue)
     {
-        sample = new Atom[size];
+        atoms = new Atom[size];
 
         //create atoms
         for (int i =0; i< size; i++)
         {
-            sample[i] = new Atom(no, parameter_name, parameter_value);
+            atoms[i] = new Atom(element, parameterName, parameterValue);
         }
     }
 
 //    Sample(int size, Atom atom)
 //    {
-//        sample = new Atom[size];
+//        atoms = new Atom[size];
 //
 //        //create atoms
 //        for (int i =0; i< size; i++)
 //        {
-//            sample[i] = new Atom(atom);
+//            atoms[i] = new Atom(atom);
 //        }
 //    }
 
+    /**
+     *
+     * @return ilosc atomow w probce
+     */
     public int size()
     {
-        return sample.length;
+        return atoms.length;
     }
 
+    /**
+     * zwraca wartosci parametrow (czas połowicznego rozpadu, stała rozpadu lub średni czas życia cząstki)
+     * @param parameterName nazwa parametru ktorego wartosc chcemy otrzymac (halfLife, meanLifeTime lub decayConstant)
+     * @return wartosc powyzszego parametru (halfLife zwracane jest w sekundach)
+     */
     public float get(String parameterName)
     {
-        return sample[0].Parameter.get(parameterName);
+        return atoms[0].parameter.get(parameterName);
     }
 
-    public boolean getState(int index)
+    //
+
+    /**
+     *
+     * @param index indeks atomu w kolekcji
+     * @return stan danego atomu - czy już się rozpadł
+     */
+    public boolean isUndergone(int index)
     {
-        return sample[index].getState();
+        return atoms[index].isUndergone();
     }
 
-    void Undergo(int index)
+    /**
+     * rozpad atomu - zmienia stanu atomu o danym indeksie- nadaje polu undergone wartosc true
+     */
+    void undergo(int index)
     {
-        sample[index].Undergone();
+        atoms[index].undergo();
     }
 }

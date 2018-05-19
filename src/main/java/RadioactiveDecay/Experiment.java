@@ -3,21 +3,34 @@ package RadioactiveDecay;
 import java.util.Date;
 import java.util.Random;
 
+/**
+ * klasa do tworzenia eksperymentu
+ */
 public class Experiment extends Thread
 {
-    private Sample sample;
-    private Date t0;
-    private long duration;
-    private int N0;
-    private int N;
-    private double P;
-    private double A;
-    private float decayConstant;
-    private float halfLife;
+    private Sample sample;          //próbka
+    private Date t0;                //czas rozpoczęcia
+    private long t;                 //aktualny czas w milisekundach
+    private long duration;          //czas trwania w milisekundach
+    private int N0;                 //początkowa liczba atomów
+    private int N;                  //aktualna liczba atomów, które nie uległy rozpadowi
+    private double P;               //aktualne prawdopodobieństwo przeżycia cząstki
+    private double A;               //aktualna aktywność promieniotwórcza próbki
+    private float decayConstant;    //stała rozpadu
+    private float halfLife;         //czas połowicznego rozpadu
 
-    Experiment(long duration, int size, ChemicalElement no, String parameter_name, Float parameter_value)
+
+    /**
+     *
+     * @param duration czas trwania eksperymentu w sekundach
+     * @param size wielkosc probki
+     * @param element rodzaj pierwiastka
+     * @param parameterName nazwa parametru ktory podajemy (halfLife, meanLifeTime lub decayConstant)
+     * @param parameterValue wartosc powyzszego parametru (halfLife podajemy w sekundach)
+     */
+    public Experiment(long duration, int size, ChemicalElement element, String parameterName, Float parameterValue)
     {
-        this.sample = new Sample(size, no, parameter_name, parameter_value);
+        this.sample = new Sample(size, element, parameterName, parameterValue);
         this.t0= new Date();
         this.duration = duration*1000; //bylo w sekundach, zmieniam na milisekundy
         this.N0 = size;
@@ -35,73 +48,121 @@ public class Experiment extends Thread
 //
 //    }
 
+    /**
+     * Wylicza ile czastek nie uległo rozkladowi.
+     * @param t czas od startu eksperymentu
+     * @return ile czastek nie uleglo rozpadowi
+     */
     public int remainingParticles(double t)
     {
-        // t/1000 bo zmieniamy na sekundy
-        //w homMany obliczam ile ma sie rozpaść
-        int howMany = N;
-        N = (int) (N0 * Math.pow( 0.5, t/1000/halfLife ));
+        int howMany = N;                                    //w homMany obliczam ile ma sie rozpaść
+        N = (int) (N0 * Math.pow( 0.5, t/1000/halfLife ));  // t/1000 bo zmieniamy na sekundy
         howMany -= N;
-        Undergo(howMany);
+        undergo(howMany);                                   //rozpad cząstek w próbce
         return N;
     }
 
+    /**
+     * Wylicza aktualne prawdopodobieństwo przeżycia cząstki.
+     * @param t czas od startu eksperymentu
+     * @return aktualne prawdopodobieństwo przeżycia cząstki
+     */
     public double surviveProbability(double t)
     {
         P = Math.pow( Math.E, -decayConstant*t/1000);
         return P;
     }
 
+    /**
+     * Wylicza aktualna aktywnosc promieniotworcza probki.
+     * @param t czas od startu eksperymentu
+     * @return aktualna aktywnosc promieniotworcza probki
+     */
     public double radiologicalActivity(double t)
     {
         A = decayConstant * N0 *  Math.pow( Math.E, -decayConstant*t/1000);
         return A;
     }
 
+    /**
+     * W czasie trwania eksperyentu nastepuje ciagle wyliczanie parametrow:
+     * aktualna aktywnosc promieniotworcza probki,
+     * aktualne prawdopodobieństwo przeżycia cząstki,
+     * ile czastek nie uleglo rozpadowi.
+     */
     @Override
     public void run()
     {
-        double t = (new Date()).getTime() - t0.getTime();
+        t = (new Date()).getTime() - t0.getTime();   //aktualny czas
         while ( t <= duration)
         {
-            try {
-                sleep( (long)(halfLife*1000/4) );
-            }
-            catch(Exception e)
-            {
-                System.out.println(e.getMessage());
-            }
-            System.out.println("time: " + t/1000);
-            System.out.println("remaining particles: " + remainingParticles(t));
-            System.out.println("survive probability: " + surviveProbability(t));
-            System.out.println("radiological activity: " + radiologicalActivity(t));
-            for(int i =0; i<sample.size(); i++)
-            {
-                System.out.print(sample.getState(i)+" ");
-            }
-            System.out.println();
-            System.out.println();
+            remainingParticles(t);
+            surviveProbability(t);
+            radiologicalActivity(t);
             t = (new Date()).getTime() - t0.getTime();
         }
     }
 
-    public int getN()
+    /**
+     *
+     * @return ilosc czastek ktora nie ulegla rozpadowi
+     */
+    public int getRemainingParticles()
     {
         return N;
     }
 
-    public double getP()
+    /**
+     *
+     * @return aktualne prawdopodobieństwo przeżycia cząstki
+     */
+    public double getSurviveProbability()
     {
         return P;
     }
 
-    public double getA()
+    /**
+     *
+     * @return aktualna aktywnosc promieniotworcza probki
+     */
+    public double getRadiologicalActivity()
     {
         return A;
     }
 
-    //rozpad czasteczek w probce
-    private void Undergo(int howMany)
+    /**
+     *
+     * @return czas od poczatku eksperymentu w milisekundach
+     */
+    public long getTime()
+    {
+        return t;
+    }
+
+    /**
+     *
+     * @return czas trwania eksperymentu w milisekundach
+     */
+    public long getDuration()
+    {
+        return duration;
+    }
+
+    /**
+     * zwraca stan atomu o danym indeksie (czy juz ulegl rozpadowi)
+     * @param index indeks atomu w probce
+     * @return stan atomu czy juz ulegl rozpadowi)
+     */
+    public boolean isUndergone(int index)
+    {
+        return sample.isUndergone(index);
+    }
+
+    /**
+     * rozpad czasteczek w probce
+     * @param howMany ile czastek ma sie rozpasc
+     */
+    private void undergo(int howMany)
     {
         int index;
         for (int i = 0; i < howMany; i++)
@@ -109,10 +170,10 @@ public class Experiment extends Thread
             //przez losowanie indeksu szukam atomu ktory jeszcze sie nie rozpadl
             do {
                 index = (new Random()).nextInt(sample.size());
-            } while(sample.getState(index) == true);
+            } while(sample.isUndergone(index) == true);
 
             //gdy znajdę nastepuje rozpad czasteczki
-            sample.Undergo(index);
+            sample.undergo(index);
         }
     }
 }

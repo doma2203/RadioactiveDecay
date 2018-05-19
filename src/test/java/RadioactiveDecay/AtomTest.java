@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class AtomTest {
 
-Atom atom = new Atom(ChemicalElement.Uran, "HalfLife",  2.23f);
+Atom atom = new Atom(ChemicalElement.Uran, "halfLife",  2.23f);
 
     @Test
     public void getAtomicNumber() { assertEquals(235, atom.getAtomicNumber()); }
@@ -13,15 +13,12 @@ Atom atom = new Atom(ChemicalElement.Uran, "HalfLife",  2.23f);
     public void getName() { assertEquals("Uran", atom.getName()); }
 
     @Test
-    public void getParameterName() { assertEquals("HalfLife", atom.getParameterName()); }
-
-    @Test
-    public void getParameterValue() { assertEquals(Float.valueOf(2.23f),atom.getParameterValue());}
+    public void getParameterValue() { assertEquals(Float.valueOf(2.23f),atom.getParameterValue("halfLife"));}
 
     @Test
     public void Undergone() {
-        assertEquals(false,atom.getState());
-        atom.Undergone();
-        assertEquals(true, atom.getState());
+        assertEquals(false,atom.isUndergone());
+        atom.undergo();
+        assertEquals(true, atom.isUndergone());
     }
 }
