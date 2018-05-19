@@ -37,7 +37,6 @@ public class App
 ```
 ## Zobacz też
 
-[Dokumentacja dostępnych funkcji](index.html)
+[Dokumentacja dostępnych funkcji](https://doma2203.github.io/RadioactiveDecay/)
 
 ---
-&copy 
