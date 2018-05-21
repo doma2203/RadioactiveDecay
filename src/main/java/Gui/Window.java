@@ -117,7 +117,7 @@ public class Window extends JFrame
                 chart.clear();
 
                 ex = new Experiment(
-                        control.getInputTime(),  size, control.getInputElement(), "halfLife", (float) 2);
+                        control.getInputTime(),  size, control.getInputElement(), "halfLife", (float)control.getInputHalfTime());
 
                 ActionListener repaintExperiment = new ActionListener()
                 {
@@ -239,36 +239,56 @@ public class Window extends JFrame
         {
             super.paintComponent(g);
 
-            double xScale = ((double) getWidth() - (2 * padding)) / 10;
-            double yScale = ((double) getHeight() - (2 * padding)) / 10;
-
             if(size > 0)
             {
                 int x = padding;
                 int y = padding;
-                String title = "Wizualizacja rozpadu atomow.";
+                String title = "Wizualizacja rozpadu atomów.";
                 FontMetrics metrics = g.getFontMetrics();
                 int titleWidth = metrics.stringWidth(title);
                 g.drawString(title, getWidth() / 2 - titleWidth / 2, y - (metrics.getHeight() / 2));
             }
 
-            for(int i = 0; i < size; i++)
+            if(size <= 100)
             {
-                if(ex.isUndergone(i))
-                    g.setColor(Color.red);
-                else
-                    g.setColor(Color.green);
+                double xScale = ((double) getWidth() - (2 * padding)) / 10;
+                double yScale = ((double) getHeight() - (2 * padding)) / 10;
 
-                int x = (int)((i % 10) * xScale) + padding;
-                int y = (int)((i % 100)/10 * yScale) + padding;
-                g.fillOval(x,y, (int)xScale, (int)yScale);
-
-                if(!ex.isUndergone(i))
+                for (int i = 0; i < size; i++)
                 {
-                    g.setColor(Color.BLACK);
-                    FontMetrics metrics = g.getFontMetrics();
-                    int labelWidth = metrics.stringWidth(element.toString());
-                    g.drawString(element.toString(), x + (int)(xScale / 2) - (int) (labelWidth / 2), y + (int) (yScale / 2) + (int)( metrics.getAscent() / 2));
+                    if (ex.isUndergone(i))
+                        g.setColor(Color.red);
+                    else
+                        g.setColor(Color.green);
+
+                    int x = (int) ((i % 10) * xScale) + padding;
+                    int y = (int) ((i % 100) / 10 * yScale) + padding;
+                    g.fillOval(x, y, (int) xScale, (int) yScale);
+
+                    if (!ex.isUndergone(i))
+                    {
+                        g.setColor(Color.BLACK);
+                        FontMetrics metrics = g.getFontMetrics();
+                        int labelWidth = metrics.stringWidth(element.toString());
+                        g.drawString(element.toString(), x + (int) (xScale / 2) - (int) (labelWidth / 2), y + (int) (yScale / 2) + (int) (metrics.getAscent() / 2));
+                    }
+                }
+            }
+            else
+            {
+                double xScale = ((double) getWidth() - (2 * padding)) / 100;
+                double yScale = ((double) getHeight() - (2 * padding)) / 10;
+
+                for (int i = 0; i < size; i++)
+                {
+                    if (ex.isUndergone(i))
+                        g.setColor(Color.red);
+                    else
+                        g.setColor(Color.green);
+
+                    int x = (int) ((i % 100) * xScale) + padding;
+                    int y = (int) ((i % 1000) / 100 * yScale) + padding;
+                    g.fillOval(x, y, (int) xScale, (int) yScale);
                 }
             }
         }
@@ -327,7 +347,7 @@ public class Window extends JFrame
         {
             radiologicalActivity.add(_radiologicalActivity);
             time.add(_time);
-            maxRadAct = _elementsSize/3;
+            maxRadAct = _elementsSize/3 + 1;
             maxTime = _timeSize;
             isChart = true;
             repaint();
@@ -353,9 +373,6 @@ public class Window extends JFrame
         {
             super.paintComponent(g);
 
-
-
-
             if(isChart) {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -363,7 +380,7 @@ public class Window extends JFrame
                 //dodanie tytulu wykresu
                 int x = padding + labelPadding;
                 int y = getHeight() - (((numberYDivisions) * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
-                String title = "Wykres wartości aktywnosci radiologicznej w czasie.";
+                String title = "Wykres wartości aktywności radiologicznej w czasie.";
                 FontMetrics metrics = g2.getFontMetrics();
                 int titleWidth = metrics.stringWidth(title);
                 g2.drawString(title, getWidth() / 2 - titleWidth / 2, y - (metrics.getHeight() / 2));
@@ -378,12 +395,14 @@ public class Window extends JFrame
                 g2.setColor(Color.BLACK);
 
                 // tworzenie poziomych linii i opisanie osi Y
-                for (int i = 0; i < numberYDivisions + 1; i++) {
+                for (int i = 0; i < numberYDivisions + 1; i++)
+                {
                     int x0 = padding + labelPadding;
                     int x1 = pointWidth + padding + labelPadding;
                     int y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
                     int y1 = y0;
-                    if (maxRadAct > 0) {
+                    if (maxRadAct > 0)
+                    {
                         g2.setColor(gridColor);
                         g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
                         g2.setColor(Color.BLACK);
@@ -396,13 +415,16 @@ public class Window extends JFrame
                 }
 
                 // tworzenie pionowych linii i opisanie osi X
-                for (int i = 0; i <= maxTime; i++) {
-                    if (maxTime > 0) {
+                for (int i = 0; i <= maxTime; i++)
+                {
+                    if (maxTime > 0)
+                    {
                         int x0 = i * (getWidth() - padding * 2 - labelPadding) / maxTime + padding + labelPadding;
                         int x1 = x0;
                         int y0 = getHeight() - padding - labelPadding;
                         int y1 = y0 - pointWidth;
-                        if ((i % ((int) ((maxTime / 20.0)) + 1)) == 0) {
+                        if ((i % ((int) ((maxTime / 20.0)) + 1)) == 0)
+                        {
                             g2.setColor(gridColor);
                             g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
                             g2.setColor(Color.BLACK);
@@ -437,7 +459,8 @@ public class Window extends JFrame
 
                 // rysowanie punktow na wykresie
                 g2.setStroke(new BasicStroke(2f));
-                for (int i = 1; i < time.size(); i++) {
+                for (int i = 1; i < time.size(); i++)
+                {
                     g2.setColor(lineColor);
                     int x1 = (int) ((time.get(i - 1).intValue() * xScale) / 1000 + padding + labelPadding);
                     int y1 = (int) ((maxRadAct - radiologicalActivity.get(i - 1)) * yScale + padding);
@@ -508,26 +531,32 @@ public class Window extends JFrame
     public class Control extends JPanel
     {
         private JScrollBar scrollTime;
+        private JScrollBar scrollHalfTime;
         private JScrollBar scrollSize;
         private JLabel inputTime;
+        private JLabel inputHalfTime;
         private JLabel inputSize;
         private JLabel inputElement;
         private JComboBox<ChemicalElement> elementsList;
 
         public Control()
         {
-            this.setLayout(new GridLayout(6,1));
+            this.setLayout(new GridLayout(8,1));
 
             elementsList = new JComboBox<ChemicalElement>();
             elementsList.setModel(new DefaultComboBoxModel<>(ChemicalElement.values()));
-            scrollTime = new JScrollBar(JScrollBar.HORIZONTAL, 10, 1, 1, 1001);
-            scrollSize = new JScrollBar(JScrollBar.HORIZONTAL, 22, 1, 1, 1001);
+            scrollTime = new JScrollBar(JScrollBar.HORIZONTAL, 10, 1, 1, 501);
+            scrollHalfTime = new JScrollBar(JScrollBar.HORIZONTAL, 2, 1, 2, 11);
+            scrollSize = new JScrollBar(JScrollBar.HORIZONTAL, 100, 1, 10, 1001);
             inputTime = new JLabel("Czas: " + String.valueOf(scrollTime.getValue()));
+            inputHalfTime = new JLabel("Czas połowiczego rozpadu: " + String.valueOf(scrollHalfTime.getValue()));
             inputSize = new JLabel("Ilość atomów: " + String.valueOf(scrollSize.getValue()));
             inputElement = new JLabel("Pierwiastek: " + elementsList.getItemAt(0));
 
             this.add(inputTime);
             this.add(scrollTime);
+            this.add(inputHalfTime);
+            this.add(scrollHalfTime);
             this.add(inputSize);
             this.add(scrollSize);
             this.add(inputElement);
@@ -540,6 +569,7 @@ public class Window extends JFrame
                 {
                     chart.clear();
                     canvas.clear();
+                    navigation.clearValues();
                     try
                     {
                         timer.stop();
@@ -551,6 +581,25 @@ public class Window extends JFrame
                     inputTime.setText("Czas: " + String.valueOf(scrollTime.getValue()));
                 }
             });
+            scrollHalfTime.addAdjustmentListener(new AdjustmentListener()
+            {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e)
+            {
+                chart.clear();
+                canvas.clear();
+                navigation.clearValues();
+                try
+                {
+                    timer.stop();
+                }
+                catch(Exception exc)
+                {
+
+                }
+                inputHalfTime.setText("Czas połowicznego rozpadu: " + String.valueOf(scrollHalfTime.getValue()));
+                 }
+            });
             scrollSize.addAdjustmentListener(new AdjustmentListener()
             {
                 @Override
@@ -558,6 +607,7 @@ public class Window extends JFrame
                 {
                     chart.clear();
                     canvas.clear();
+                    navigation.clearValues();
                     try
                     {
                         timer.stop();
@@ -576,6 +626,7 @@ public class Window extends JFrame
                 {
                     chart.clear();
                     canvas.clear();
+                    navigation.clearValues();
                     try
                     {
                         timer.stop();
@@ -593,6 +644,11 @@ public class Window extends JFrame
         public int getInputSize()
         {
             return scrollSize.getValue();
+        }
+
+        public int getInputHalfTime()
+        {
+            return scrollHalfTime.getValue();
         }
 
         public ChemicalElement getInputElement()
